@@ -76,10 +76,9 @@ int main(int argc, char **argv){
     printf("%16s %-4s%-4s%-4s %s\n", " ", "PC", "BP", "SP", "Stack");
     printf("%16s %-4u%-4u%-4u\n","Initial Values: ", PC, BP, SP);
 
-
     
     // fetch execute cycle
-    while(PC < offset){
+    while(eop){
         
         // instruction fetch
         IR.OP = pas[PC];
@@ -107,26 +106,53 @@ int main(int argc, char **argv){
                         break;
                     case 1: // ADD
                         printf("%-4s %-2u %-8u","ADD", IR.L, IR.M);
-                        pas[SP + 1] = pas[SP] + pas[SP + 1];
+                        pas[SP + 1] = pas[SP + 1] + pas[SP];
                         SP += 1;
                         break;
                     case 2: // SUB
+                        printf("%-4s %-2u %-8u","SUB", IR.L, IR.M);
+                        pas[SP + 1] = pas[SP + 1] - pas[SP];
+                        SP += 1;
                         break;
                     case 3: // MUL
+                        printf("%-4s %-2u %-8u","MUL", IR.L, IR.M);
+                        pas[SP + 1] = pas[SP + 1] * pas[SP];
+                        SP += 1;
                         break;
                     case 4: // DIV
+                        printf("%-4s %-2u %-8u","DIV", IR.L, IR.M);
+                        pas[SP + 1] = pas[SP + 1] / pas[SP];
+                        SP += 1;
                         break;
                     case 5: // EQL
+                        printf("%-4s %-2u %-8u","EQL", IR.L, IR.M);
+                        pas[SP + 1] = pas[SP + 1] == pas[SP];
+                        SP += 1;
                         break;
                     case 6: // NEQ
+                        printf("%-4s %-2u %-8u","NEQ", IR.L, IR.M);
+                        pas[SP + 1] = pas[SP + 1] != pas[SP];
+                        SP += 1;
                         break;
                     case 7: // LSS
+                        printf("%-4s %-2u %-8u","LSS", IR.L, IR.M);
+                        pas[SP + 1] = pas[SP + 1] < pas[SP];
+                        SP += 1;
                         break;
                     case 8: // LEQ
+                        printf("%-4s %-2u %-8u","LEQ", IR.L, IR.M);
+                        pas[SP + 1] = pas[SP + 1] <= pas[SP];
+                        SP += 1;
                         break;
                     case 9: // GTR
+                        printf("%-4s %-2u %-8u","GTR", IR.L, IR.M);
+                        pas[SP + 1] = pas[SP + 1] > pas[SP];
+                        SP += 1;
                         break;
                     case 10: // GEQ
+                        printf("%-4s %-2u %-8u","GEQ", IR.L, IR.M);
+                        pas[SP + 1] = pas[SP + 1] >= pas[SP];
+                        SP += 1;
                         break;
                 }
                 break;
