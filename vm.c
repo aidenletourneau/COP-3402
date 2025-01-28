@@ -21,7 +21,6 @@ int base(int BP, int L){
 
 //function just for debugging
 void printStack(int BP, int SP){
-    printf("   Stack: ");
     for(int i = BP; i >= SP; i--){
         printf(" %d ", pas[i]);
     }
@@ -74,7 +73,7 @@ int main(int argc, char **argv){
 
     FILE* output = fopen("output.txt", "w");
 
-    printf("%16s %-4s%-4s%-4s\n", " ", "PC", "BP", "SP", "Stack");
+    printf("%16s %-4s%-4s%-4s %s\n", " ", "PC", "BP", "SP", "Stack");
     printf("%16s %-4u%-4u%-4u\n","Initial Values: ", PC, BP, SP);
 
 
@@ -87,14 +86,14 @@ int main(int argc, char **argv){
         IR.L = pas[PC+1];
         IR.M = pas[PC+2];
         PC += 3;
-        printf("executing %u %u %u\n", IR.OP, IR.L, IR.M);
+        //printf("executing %u %u %u\n", IR.OP, IR.L, IR.M);
 
     
 
         // instruction execute
         switch(IR.OP){
             case 1: // LIT
-                printf("LIT %u %u", IR.L, IR.M);
+                printf("%-4s %-2u %-8u","LIT", IR.L, IR.M);
                 SP -= 1;
                 pas[SP] = IR.M;
 
@@ -107,7 +106,9 @@ int main(int argc, char **argv){
                     case 0: // RTN
                         break;
                     case 1: // ADD
-                        printf("ADD %u %u", IR.L, IR.M);
+                        printf("%-4s %-2u %-8u","ADD", IR.L, IR.M);
+                        pas[SP + 1] = pas[SP] + pas[SP + 1];
+                        SP += 1;
                         break;
                     case 2: // SUB
                         break;
@@ -172,6 +173,7 @@ int main(int argc, char **argv){
                         //pas[SP] = getc();
                         break;
                     case 3:
+                        printf("%-4s %-2u %-8u","SYS", IR.L, IR.M);
                         eop = 0;
                         break;
                 }
@@ -179,7 +181,9 @@ int main(int argc, char **argv){
                 break;
         }
 
+        printf(" %-4u%-4u%-4u", PC, BP, SP);
         printStack(BP, SP);
+        
     }
 
 
