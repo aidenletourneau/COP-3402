@@ -26,17 +26,17 @@ int base(int BP, int L){
 }
 
 // function to print stack recursively
-void printStack(unsigned int BP, unsigned int SP){
+void printStack(unsigned int BP, unsigned int SP, FILE* output){
     if(BP == 499){
         for(int i = BP; i >= SP; i--){
-            printf(" %u ", pas[i]);
+            fprintf(output, " %u ", pas[i]);
         }
     }
     else{
-        printStack(pas[BP - 1] , BP+1);
-        printf("|");
+        printStack(pas[BP - 1] , BP+1, output);
+        fprintf(output, "|");
         for(int i = BP; i >= SP; i--){
-            printf(" %d ", pas[i]);
+            fprintf(output, " %d ", pas[i]);
         }
     }
 }
@@ -57,6 +57,8 @@ int main(int argc, char **argv){
     unsigned int eop = 1;
     InstructionRegister IR;
     
+    // output file pointer
+    FILE* output = fopen("output.txt", "w");
 
     // first we need to load the program from the input file into the PAS
     FILE * fptr = fopen(argv[1], "r");
@@ -77,8 +79,8 @@ int main(int argc, char **argv){
 
 
 
-    printf("%16s %-4s%-4s%-4s %s\n", " ", "PC", "BP", "SP", "Stack");
-    printf("%16s %-4u%-4u%-4u\n\n","Initial Values: ", PC, BP, SP);
+    fprintf(output, "%16s %-4s%-4s%-4s %s\n", " ", "PC", "BP", "SP", "Stack");
+    fprintf(output, "%16s %-4u%-4u%-4u\n\n","Initial Values: ", PC, BP, SP);
     // fetch execute cycle
     while(eop){
         
@@ -94,7 +96,7 @@ int main(int argc, char **argv){
             case 1: // LIT
                 SP -= 1;
                 pas[SP] = IR.M;
-                printf("%-4s %-2u %-8u","LIT", IR.L, IR.M);
+                fprintf(output, "%-4s %-2u %-8u","LIT", IR.L, IR.M);
                 break;
 
             case 2: // OPR
@@ -103,67 +105,67 @@ int main(int argc, char **argv){
                         SP = BP + 1; 
                         BP = pas[SP - 2]; 
                         PC = pas[SP - 3];
-                        printf("%-4s %-2u %-8u","RTN", IR.L, IR.M);
+                        fprintf(output, "%-4s %-2u %-8u","RTN", IR.L, IR.M);
                         break;
 
                     case 1: // ADD
                         pas[SP + 1] = pas[SP + 1] + pas[SP];
                         SP += 1;
-                        printf("%-4s %-2u %-8u","ADD", IR.L, IR.M);
+                        fprintf(output, "%-4s %-2u %-8u","ADD", IR.L, IR.M);
                         break;
 
                     case 2: // SUB
                         pas[SP + 1] = pas[SP + 1] - pas[SP];
                         SP += 1;
-                        printf("%-4s %-2u %-8u","SUB", IR.L, IR.M);
+                        fprintf(output, "%-4s %-2u %-8u","SUB", IR.L, IR.M);
                         break;
 
                     case 3: // MUL
                         pas[SP + 1] = pas[SP + 1] * pas[SP];
                         SP += 1;
-                        printf("%-4s %-2u %-8u","MUL", IR.L, IR.M);
+                        fprintf(output, "%-4s %-2u %-8u","MUL", IR.L, IR.M);
                         break;
 
                     case 4: // DIV
                         pas[SP + 1] = pas[SP + 1] / pas[SP];
                         SP += 1;
-                        printf("%-4s %-2u %-8u","DIV", IR.L, IR.M);
+                        fprintf(output, "%-4s %-2u %-8u","DIV", IR.L, IR.M);
                         break;
 
                     case 5: // EQL
                         pas[SP + 1] = pas[SP + 1] == pas[SP];
                         SP += 1;
-                        printf("%-4s %-2u %-8u","EQL", IR.L, IR.M);
+                        fprintf(output, "%-4s %-2u %-8u","EQL", IR.L, IR.M);
                         break;
 
                     case 6: // NEQ
                         pas[SP + 1] = pas[SP + 1] != pas[SP];
                         SP += 1;
-                        printf("%-4s %-2u %-8u","NEQ", IR.L, IR.M);
+                        fprintf(output, "%-4s %-2u %-8u","NEQ", IR.L, IR.M);
 
                         break;
                     case 7: // LSS
                         pas[SP + 1] = pas[SP + 1] < pas[SP];
                         SP += 1;
-                        printf("%-4s %-2u %-8u","LSS", IR.L, IR.M);
+                        fprintf(output, "%-4s %-2u %-8u","LSS", IR.L, IR.M);
                         break;
 
                     case 8: // LEQ
                         pas[SP + 1] = pas[SP + 1] <= pas[SP];
                         SP += 1;
-                        printf("%-4s %-2u %-8u","LEQ", IR.L, IR.M);
+                        fprintf(output, "%-4s %-2u %-8u","LEQ", IR.L, IR.M);
                         break;
 
                     case 9: // GTR
                         pas[SP + 1] = pas[SP + 1] > pas[SP];
                         SP += 1;
-                        printf("%-4s %-2u %-8u","GTR", IR.L, IR.M);
+                        fprintf(output, "%-4s %-2u %-8u","GTR", IR.L, IR.M);
                         break;
 
                     case 10: // GEQ
                         pas[SP + 1] = pas[SP + 1] >= pas[SP];
                         SP += 1;
-                        printf("%-4s %-2u %-8u","GEQ", IR.L, IR.M);
+                        fprintf(output, "%-4s %-2u %-8u","GEQ", IR.L, IR.M);
                         break;
 
                 }
@@ -172,13 +174,13 @@ int main(int argc, char **argv){
             case 3: // LOD
                 SP -= 1;
                 pas[SP] = pas[base(BP, IR.L) - IR.M];
-                printf("%-4s %-2u %-8u","LOD", IR.L, IR.M);
+                fprintf(output, "%-4s %-2u %-8u","LOD", IR.L, IR.M);
                 break;
 
             case 4: // STO
                 pas[base(BP, IR.L) - IR.M] = pas[SP];
                 SP += 1;
-                printf("%-4s %-2u %-8u","STO", IR.L, IR.M);
+                fprintf(output, "%-4s %-2u %-8u","STO", IR.L, IR.M);
                 break;
 
             case 5: // CAL
@@ -187,56 +189,54 @@ int main(int argc, char **argv){
                 pas[SP - 3] = PC; //return address
                 BP = SP - 1;
                 PC = IR.M;
-                printf("%-4s %-2u %-8u","CAL", IR.L, IR.M);
+                fprintf(output, "%-4s %-2u %-8u","CAL", IR.L, IR.M);
                 break;
 
             case 6: // INC
                 SP = SP - IR.M;
-                printf("%-4s %-2u %-8u","INC", IR.L, IR.M);
+                fprintf(output, "%-4s %-2u %-8u","INC", IR.L, IR.M);
                 break;
 
             case 7: // JMP
                 PC = IR.M;
-                printf("%-4s %-2u %-8u","JMP", IR.L, IR.M);
+                fprintf(output, "%-4s %-2u %-8u","JMP", IR.L, IR.M);
                 break;
 
             case 8: // JPC 
                 if(pas[SP] == 0) PC = IR.M;
                 SP += 1;
-                printf("%-4s %-2u %-8u","JPC", IR.L, IR.M);
+                fprintf(output, "%-4s %-2u %-8u","JPC", IR.L, IR.M);
 
                 break;
 
             case 9: // SYSCALL
                 switch (IR.M){
                     case 1:
-                        printf("Output result is: %u\n", pas[SP]);
+                        fprintf(output, "Output result is: %u\n", pas[SP]);
                         //putc(pas[SP], output); 
                         SP += 1;
-                        printf("%-4s %-2u %-8u","SYS", IR.L, IR.M);
+                        fprintf(output, "%-4s %-2u %-8u","SYS", IR.L, IR.M);
 
                         break;
 
                     case 2:
                         SP = SP-1; 
                         scanf("Please Enter an Integer: %u\n", &pas[SP]); // change this eventually
-                        printf("%-4s %-2u %-8u","SYS", IR.L, IR.M);
+                        fprintf(output, "%-4s %-2u %-8u","SYS", IR.L, IR.M);
 
                         break;
                     case 3:
                         eop = 0;
-                        printf("%-4s %-2u %-8u","SYS", IR.L, IR.M);
+                        fprintf(output, "%-4s %-2u %-8u","SYS", IR.L, IR.M);
 
                         break;
                 }
                 break;
         }
 
-        printf(" %-4u%-4u%-4u", PC, BP, SP);
-        printStack(BP, SP);
-        printf("\n");
-    
-        
+        fprintf(output, " %-4u%-4u%-4u", PC, BP, SP);
+        printStack(BP, SP, output);
+        fprintf(output, "\n");
     }
 
     return 1;
