@@ -6,6 +6,12 @@
 
 unsigned int pas[ARRAY_SIZE];
 
+typedef struct InstructionRegister{
+    unsigned int OP;
+    unsigned int L;
+    unsigned int M;
+} InstructionRegister;
+
 /**********************************************/
 /* Find base L levels down */
 /* */
@@ -19,22 +25,26 @@ int base(int BP, int L){
     return arb;
 }
 
-//function just for debugging
-void printStack(int BP, int SP){
-    
-    for(int i = 500; i >= SP; i--){
-        printf(" %d ", pas[i]);
+// function to print stack recursively
+void printStack(unsigned int BP, unsigned int SP){
+    if(BP == 499){
+        for(int i = BP; i >= SP; i--){
+            printf(" %u ", pas[i]);
+        }
     }
-    printf("\n");
+    else{
+        printStack(pas[BP - 1] , BP+1);
+        printf("|");
+        for(int i = BP; i >= SP; i--){
+            printf(" %d ", pas[i]);
+        }
+    }
 }
 
 
 
-typedef struct InstructionRegister{
-    int OP;
-    int L;
-    int M;
-} InstructionRegister;
+
+
 
 
 
@@ -48,17 +58,14 @@ int main(int argc, char **argv){
     InstructionRegister IR;
     
 
-
     // first we need to load the program from the input file into the PAS
-    FILE * fptr = fopen("program.asc", "r");
+    FILE * fptr = fopen(argv[1], "r");
     unsigned int offset = PC;
     char line[100];
     while(fgets(line, sizeof(line), fptr) != NULL){
-        //printf("Reading line: %s", line);
         pas[offset] = atoi(strtok(line, " "));
         pas[offset + 1] = atoi(strtok(NULL, " "));
         pas[offset + 2] = atoi(strtok(NULL, " "));
-        //printf("Line stored at pas[%u] %u %u %u\n\n",offset,  pas[offset],  pas[offset + 1],  pas[offset + 2]);
         offset += 3;
     }
 
@@ -71,7 +78,7 @@ int main(int argc, char **argv){
 
 
     printf("%16s %-4s%-4s%-4s %s\n", " ", "PC", "BP", "SP", "Stack");
-    printf("%16s %-4u%-4u%-4u\n","Initial Values: ", PC, BP, SP);
+    printf("%16s %-4u%-4u%-4u\n\n","Initial Values: ", PC, BP, SP);
     // fetch execute cycle
     while(eop){
         
@@ -85,7 +92,6 @@ int main(int argc, char **argv){
         // instruction execute
         switch(IR.OP){
             case 1: // LIT
-                
                 SP -= 1;
                 pas[SP] = IR.M;
                 printf("%-4s %-2u %-8u","LIT", IR.L, IR.M);
@@ -99,36 +105,37 @@ int main(int argc, char **argv){
                         PC = pas[SP - 3];
                         printf("%-4s %-2u %-8u","RTN", IR.L, IR.M);
                         break;
+
                     case 1: // ADD
                         pas[SP + 1] = pas[SP + 1] + pas[SP];
                         SP += 1;
                         printf("%-4s %-2u %-8u","ADD", IR.L, IR.M);
-
                         break;
+
                     case 2: // SUB
                         pas[SP + 1] = pas[SP + 1] - pas[SP];
                         SP += 1;
                         printf("%-4s %-2u %-8u","SUB", IR.L, IR.M);
-
                         break;
+
                     case 3: // MUL
                         pas[SP + 1] = pas[SP + 1] * pas[SP];
                         SP += 1;
                         printf("%-4s %-2u %-8u","MUL", IR.L, IR.M);
-
                         break;
+
                     case 4: // DIV
                         pas[SP + 1] = pas[SP + 1] / pas[SP];
                         SP += 1;
                         printf("%-4s %-2u %-8u","DIV", IR.L, IR.M);
-
                         break;
+
                     case 5: // EQL
                         pas[SP + 1] = pas[SP + 1] == pas[SP];
                         SP += 1;
                         printf("%-4s %-2u %-8u","EQL", IR.L, IR.M);
-
                         break;
+
                     case 6: // NEQ
                         pas[SP + 1] = pas[SP + 1] != pas[SP];
                         SP += 1;
@@ -139,26 +146,26 @@ int main(int argc, char **argv){
                         pas[SP + 1] = pas[SP + 1] < pas[SP];
                         SP += 1;
                         printf("%-4s %-2u %-8u","LSS", IR.L, IR.M);
-
                         break;
+
                     case 8: // LEQ
                         pas[SP + 1] = pas[SP + 1] <= pas[SP];
                         SP += 1;
                         printf("%-4s %-2u %-8u","LEQ", IR.L, IR.M);
-
                         break;
+
                     case 9: // GTR
                         pas[SP + 1] = pas[SP + 1] > pas[SP];
                         SP += 1;
                         printf("%-4s %-2u %-8u","GTR", IR.L, IR.M);
-
                         break;
+
                     case 10: // GEQ
                         pas[SP + 1] = pas[SP + 1] >= pas[SP];
                         SP += 1;
                         printf("%-4s %-2u %-8u","GEQ", IR.L, IR.M);
-
                         break;
+
                 }
                 break;
 
@@ -166,14 +173,12 @@ int main(int argc, char **argv){
                 SP -= 1;
                 pas[SP] = pas[base(BP, IR.L) - IR.M];
                 printf("%-4s %-2u %-8u","LOD", IR.L, IR.M);
-
                 break;
 
             case 4: // STO
                 pas[base(BP, IR.L) - IR.M] = pas[SP];
                 SP += 1;
                 printf("%-4s %-2u %-8u","STO", IR.L, IR.M);
-
                 break;
 
             case 5: // CAL
@@ -183,19 +188,16 @@ int main(int argc, char **argv){
                 BP = SP - 1;
                 PC = IR.M;
                 printf("%-4s %-2u %-8u","CAL", IR.L, IR.M);
-
                 break;
 
             case 6: // INC
                 SP = SP - IR.M;
                 printf("%-4s %-2u %-8u","INC", IR.L, IR.M);
-
                 break;
 
             case 7: // JMP
                 PC = IR.M;
                 printf("%-4s %-2u %-8u","JMP", IR.L, IR.M);
-
                 break;
 
             case 8: // JPC 
@@ -232,7 +234,7 @@ int main(int argc, char **argv){
 
         printf(" %-4u%-4u%-4u", PC, BP, SP);
         printStack(BP, SP);
-
+        printf("\n");
     
         
     }
