@@ -21,7 +21,8 @@ int base(int BP, int L){
 
 //function just for debugging
 void printStack(int BP, int SP){
-    for(int i = BP; i >= SP; i--){
+    
+    for(int i = 500; i >= SP; i--){
         printf(" %d ", pas[i]);
     }
     printf("\n");
@@ -93,7 +94,6 @@ int main(int argc, char **argv){
             case 2: // OPR
                 switch (IR.M){
                     case 0: // RTN
-                        
                         SP = BP + 1; 
                         BP = pas[SP - 2]; 
                         PC = pas[SP - 3];
@@ -177,9 +177,9 @@ int main(int argc, char **argv){
                 break;
 
             case 5: // CAL
-                pas[SP - 1] = base(BP, IR.L); 
-                pas[SP - 2] = BP;
-                pas[SP - 3] = PC; 
+                pas[SP - 1] = base(BP, IR.L); // static link
+                pas[SP - 2] = BP; // dynamic link
+                pas[SP - 3] = PC; //return address
                 BP = SP - 1;
                 PC = IR.M;
                 printf("%-4s %-2u %-8u","CAL", IR.L, IR.M);
@@ -232,6 +232,8 @@ int main(int argc, char **argv){
 
         printf(" %-4u%-4u%-4u", PC, BP, SP);
         printStack(BP, SP);
+
+    
         
     }
 
