@@ -1,0 +1,7 @@
+1. Compile the program with the command:
+gcc vm.c
+
+2. With the instructions file in the same directory, use the command:
+./a.exe <instruction file name>
+
+3. output.txt contains the output of the program
