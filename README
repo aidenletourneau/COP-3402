@@ -1,7 +1,44 @@
-1. Compile the program with the command:
+# Homework X: PM/0
+
+## Description
+This is a virtual machine designed to follow the instructions of the P-Machine ISA. 
+The input is a file with instructions within the specified ISA.
+
+## Compilation Instructions
+To compile run,
+    gcc vm.c
+while in the same directory as vm.c
+
+## Usage
+To run with the input file,
+    ./a.out <InputFileName>.txt
+Replace <InputFileName> with the file name of the instructions
+
+The output, showing the instructions and corresponding stack, PC, and 
+SP values after each instruction is shown in the terminal. If 
+instruction 9 0 2 is encountered meaning there is user input, you will 
+be promted in the terminal, just enter your input and hit enter.
+
+## Example
+Running with the test case given (input file is called program.txt in this case)
+
 gcc vm.c
+./a.out program.txt 
+First few lines of output:
+                 PC  BP  SP   Stack
+Initial Values:  10  499 500 
 
-2. With the instructions file in the same directory, use the command:
-./a.exe <instruction file name>
+JMP  0  85       85  499 500 
+INC  0  5        88  499 495  0  0  0  0  0 
+LIT  0  4        91  499 494  0  0  0  0  0  4 
+STO  0  4        94  499 495  0  0  0  0  4 
+CAL  0  13       13  494 495  0  0  0  0  4 |
+JMP  0  16       16  494 495  0  0  0  0  4 |
+INC  0  4        19  494 491  0  0  0  0  4 | 499  499  97  0 
+...
 
-3. output.txt contains the output of the program
+
+## Team Information (if applicable)
+- Aiden Letourneau, ai761417@ucf.edu
+- Malik Fisher, ma671859@ucf.edu
+
