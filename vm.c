@@ -32,12 +32,15 @@ int base(int BP, int L){
 // function to print stack recursively
 // this function isn't implementing any logic, its just used to print the stack the appropriate way
 void printStack(unsigned int BP, unsigned int SP){
-    if(BP == 499){
+    
+    if(BP == 499){ // reached bottom of stack
         for(int i = BP; i >= SP; i--){
             printf(" %u ", pas[i]);
         }
     }
-    else{
+    else if(SP > BP) printStack(pas[BP - 1] , SP); // handles CAL instructions
+    
+    else{ // not at the bottom yet so recursively call the next activation record
         printStack(pas[BP - 1] , BP+1);
         printf("|");
         for(int i = BP; i >= SP; i--){
@@ -179,7 +182,7 @@ int main(int argc, char **argv){
             case 5: // CAL
                 pas[SP - 1] = base(BP, IR.L); // static link
                 pas[SP - 2] = BP; // dynamic link
-                pas[SP - 3] = PC; //return address
+                pas[SP - 3] = PC; // return address
                 BP = SP - 1;
                 PC = IR.M;
                 printf("%-4s %-2u %-8u","CAL", IR.L, IR.M);
