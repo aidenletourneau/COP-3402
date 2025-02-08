@@ -62,7 +62,7 @@ int main(int argc, char **argv){
     unsigned int offset = PC;
     char line[100];
     while(fgets(line, sizeof(line), fptr) != NULL){
-        pas[offset] = atoi(strtok(line, " "));
+        pas[offset] = atoi(strtok(line, " \t"));
         pas[offset + 1] = atoi(strtok(NULL, " \t"));
         pas[offset + 2] = atoi(strtok(NULL, " \t"));
         offset += 3;
