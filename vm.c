@@ -38,7 +38,7 @@ void printStack(unsigned int BP, unsigned int SP){
             printf(" %u ", pas[i]);
         }
     }
-    else if(SP > BP) printStack(pas[BP - 1] , SP); // handles CAL instructions
+    else if(SP > BP) printStack(pas[BP - 1] , SP); // handles CAL instructions by skipping the empty activation record
     
     else{ // not at the bottom yet so recursively call the next activation record
         printStack(pas[BP - 1] , BP+1);
